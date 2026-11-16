@@ -1,0 +1,61 @@
+<UserControl x:Class="SchoolDesk.Views.SettingsWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent" Foreground="#F4F6FB">
+    <Grid Margin="25">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0,0,0,18">
+            <TextBlock Text="SCHOOLDESK / CONFIGURATION" Foreground="#AAB8D8" />
+            <TextBlock Text="Paramètres" FontSize="30" FontWeight="SemiBold" Margin="0,5" />
+        </StackPanel>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Border Background="{StaticResource GlassSurfaceBrush}" BorderBrush="{StaticResource GlassBorderBrush}"
+                        BorderThickness="1" CornerRadius="18" Padding="18">
+                    <StackPanel>
+                        <TextBlock Text="Emploi du temps" FontSize="19" FontWeight="SemiBold" />
+                        <TextBlock Text="Personnalise le fichier JSON local avec tes cours, horaires et semaines A/B. Redémarre SchoolDesk après modification."
+                                   Foreground="#AAB5C7" TextWrapping="Wrap" Margin="0,5,0,12" />
+                        <Button Content="Ouvrir mon fichier d'emploi du temps" Click="OpenSchedule_Click"
+                                HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+                <Border Background="{StaticResource GlassSurfaceBrush}" BorderBrush="{StaticResource GlassBorderBrush}"
+                        BorderThickness="1" CornerRadius="18" Padding="18" Margin="0,15,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Matières" FontSize="19" FontWeight="SemiBold" />
+                        <TextBlock Text="La liste est utilisée dans l'agenda et le classement des documents."
+                                   Foreground="#AAB5C7" TextWrapping="Wrap" Margin="0,5,0,12" />
+                        <DockPanel>
+                            <TextBox x:Name="NewSubjectBox" DockPanel.Dock="Left" />
+                            <Button Content="Ajouter" Click="Add_Click" Margin="8,0,0,0" Padding="14,5" />
+                        </DockPanel>
+                        <ListBox x:Name="SubjectsList" Height="200" Margin="0,12,0,0"
+                                 Background="#202C40" Foreground="White" BorderThickness="0" />
+                        <Button Content="Supprimer la matière sélectionnée" Click="Delete_Click"
+                                Margin="0,10,0,0" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+                <Border Background="{StaticResource GlassSurfaceBrush}" BorderBrush="{StaticResource GlassBorderBrush}"
+                        BorderThickness="1" CornerRadius="18" Padding="18" Margin="0,15,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Démarrage de Windows" FontSize="19" FontWeight="SemiBold" />
+                        <CheckBox x:Name="StartupCheck" Content="Lancer SchoolDesk à l'ouverture de ma session Windows"
+                                  Margin="0,12,0,0" Foreground="White" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+        <DockPanel Grid.Row="2" Margin="0,15,0,0">
+            <TextBlock x:Name="StatusText" Foreground="#AAB8D8" VerticalAlignment="Center" />
+            <Button Content="Annuler" Click="Close_Click" Width="120" Height="38" DockPanel.Dock="Right"
+                    Margin="0,0,8,0" />
+            <Button Content="Enregistrer" Click="Save_Click" Width="120" Height="38" DockPanel.Dock="Right"
+                    Background="#637FF0" Foreground="White" BorderThickness="0" />
+        </DockPanel>
+    </Grid>
+</UserControl>

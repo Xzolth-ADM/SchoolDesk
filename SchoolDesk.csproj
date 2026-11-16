@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>SchoolDesk</AssemblyName>
+    <RootNamespace>SchoolDesk</RootNamespace>
+    <Version>0.5.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="Assets\schedule.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,154 @@
+<UserControl x:Class="SchoolDesk.Views.EditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Background="Transparent" Foreground="#F5F7FF" KeyDown="Window_KeyDown">
+ <UserControl.Resources>
+  <Style TargetType="Button">
+   <Setter Property="Background" Value="#2C3858"/><Setter Property="Foreground" Value="#F5F7FF"/>
+   <Setter Property="BorderBrush" Value="#6679A4"/><Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="Padding" Value="11,7"/><Setter Property="Margin" Value="3"/>
+   <Setter Property="Cursor" Value="Hand"/>
+   <Setter Property="Template">
+    <Setter.Value><ControlTemplate TargetType="Button">
+     <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+             BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+      <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True"/>
+     </Border>
+     <ControlTemplate.Triggers>
+      <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#B4C7FF"/><Setter TargetName="Surface" Property="Opacity" Value="0.92"/></Trigger>
+      <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.76"/></Trigger>
+      <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Surface" Property="Opacity" Value="0.45"/></Trigger>
+     </ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value>
+   </Setter>
+   <Style.Triggers>
+    <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#43547D"/><Setter Property="BorderBrush" Value="#A7BBFF"/></Trigger>
+    <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/></Trigger>
+   </Style.Triggers>
+  </Style>
+  <Style TargetType="TextBox">
+   <Setter Property="Background" Value="#1B2540"/><Setter Property="Foreground" Value="#F5F7FF"/>
+   <Setter Property="BorderBrush" Value="#52658E"/><Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="Padding" Value="9"/>
+  </Style>
+  <Style TargetType="ComboBox">
+   <Setter Property="Background" Value="#1B2540"/><Setter Property="Foreground" Value="#F5F7FF"/>
+   <Setter Property="BorderBrush" Value="#52658E"/><Setter Property="Padding" Value="7"/>
+  </Style>
+  <Style TargetType="ListBox">
+   <Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#F5F7FF"/>
+   <Setter Property="BorderThickness" Value="0"/>
+  </Style>
+ </UserControl.Resources>
+ <Grid Margin="24">
+  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <DockPanel Margin="0,0,0,18">
+   <StackPanel>
+    <TextBlock Text="SCHOOLDESK  /  DOCUMENTS" Foreground="#AAB8D8" FontSize="12" FontWeight="SemiBold"/>
+    <TextBlock Text="Écrire sans distraction" FontSize="30" FontWeight="SemiBold" Margin="0,4,0,0"/>
+   </StackPanel>
+   <StackPanel x:Name="HeaderActions" DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+    <Button Content="Nouveau" Click="New_Click"/>
+    <Button Content="Ouvrir" Click="Open_Click"/>
+    <Button x:Name="SaveButton" Content="Enregistrer" Click="Save_Click" Background="#657FE8" BorderBrush="#AFC0FF"/>
+   </StackPanel>
+  </DockPanel>
+
+  <Border Grid.Row="1" CornerRadius="16" BorderThickness="1" BorderBrush="#6686B7E8" Padding="8" Margin="0,0,0,14">
+   <Border.Background>
+    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+     <GradientStop Color="#B82A3858" Offset="0"/><GradientStop Color="#8E19233C" Offset="0.55"/><GradientStop Color="#B8273150" Offset="1"/>
+    </LinearGradientBrush>
+   </Border.Background>
+   <DockPanel>
+    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+     <Button Content="↶" ToolTip="Annuler" Click="Undo_Click" FontSize="18" Width="40"/>
+     <Button Content="↷" ToolTip="Rétablir" Click="Redo_Click" FontSize="18" Width="40"/>
+     <Separator Margin="7,5"/>
+     <ComboBox x:Name="StyleBox" Width="120" SelectedIndex="0" SelectionChanged="Style_Changed" Margin="3">
+      <ComboBoxItem Content="Texte normal"/><ComboBoxItem Content="Titre 1"/><ComboBoxItem Content="Titre 2"/><ComboBoxItem Content="Titre 3"/>
+     </ComboBox>
+     <ComboBox x:Name="FontBox" Width="142" SelectedIndex="0" SelectionChanged="Font_Changed" Margin="3">
+      <ComboBoxItem Content="Segoe UI"/><ComboBoxItem Content="Arial"/><ComboBoxItem Content="Calibri"/><ComboBoxItem Content="Times New Roman"/><ComboBoxItem Content="Georgia"/>
+     </ComboBox>
+     <ComboBox x:Name="SizeBox" Width="68" SelectedIndex="2" SelectionChanged="Size_Changed" Margin="3">
+      <ComboBoxItem Content="10"/><ComboBoxItem Content="11"/><ComboBoxItem Content="12"/><ComboBoxItem Content="14"/><ComboBoxItem Content="16"/><ComboBoxItem Content="18"/><ComboBoxItem Content="24"/><ComboBoxItem Content="36"/>
+     </ComboBox>
+    </StackPanel>
+    <WrapPanel VerticalAlignment="Center">
+     <Button Content="G" FontWeight="Bold" Click="Bold_Click" Width="38"/>
+     <Button Content="I" FontStyle="Italic" Click="Italic_Click" Width="38"/>
+     <Button Content="S̲" Click="Underline_Click" Width="38"/>
+     <Button Content="abc̶" Click="Strike_Click" Width="44"/>
+     <Button Content="Couleur" Click="Color_Click"/>
+     <Button Content="Surligner" Click="Highlight_Click"/>
+     <Button Content="Gauche" Click="Left_Click"/>
+     <Button Content="Centre" Click="Center_Click"/>
+     <Button Content="Droite" Click="Right_Click"/>
+     <Button Content="Justifier" Click="Justify_Click"/>
+     <Button Content="• Liste" Click="Bullet_Click"/>
+     <Button Content="1. Liste" Click="Number_Click"/>
+    </WrapPanel>
+   </DockPanel>
+  </Border>
+
+  <Grid x:Name="EditorSurface" Grid.Row="2">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+   <Border Grid.Column="0" CornerRadius="18" BorderThickness="1" BorderBrush="#6686B7E8" Padding="14">
+    <Border.Background>
+     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+      <GradientStop Color="#A82A3858" Offset="0"/><GradientStop Color="#8019233C" Offset="0.55"/><GradientStop Color="#A8273150" Offset="1"/>
+     </LinearGradientBrush>
+    </Border.Background>
+    <DockPanel>
+     <StackPanel DockPanel.Dock="Top">
+      <TextBlock Text="CLASSEMENT" Foreground="#AAB8D8" FontWeight="SemiBold" Margin="2,0,0,12"/>
+      <TextBlock Text="Matière" Foreground="#BBC6E0"/>
+      <ComboBox x:Name="SubjectBox" SelectionChanged="Metadata_Changed" Margin="0,5,0,12"/>
+      <TextBlock Text="Catégorie" Foreground="#BBC6E0"/>
+      <ComboBox x:Name="TypeBox" SelectedIndex="0" SelectionChanged="Metadata_Changed" Margin="0,5,0,12">
+       <ComboBoxItem Content="Cours"/><ComboBoxItem Content="Devoir"/><ComboBoxItem Content="Évaluation"/><ComboBoxItem Content="DM"/>
+      </ComboBox>
+      <TextBlock Text="Nom du document" Foreground="#BBC6E0"/>
+      <TextBox x:Name="FileNameBox" Text="Nouveau document" TextChanged="FileName_Changed" Margin="0,5,0,8"/>
+      <TextBlock Text="MES DOCUMENTS" Foreground="#AAB8D8" FontWeight="SemiBold" Margin="2,14,0,6"/>
+     </StackPanel>
+     <ListBox x:Name="FilesList" SelectionChanged="FilesList_Changed">
+      <ListBox.ItemTemplate><DataTemplate>
+       <Border Background="#68151E34" BorderBrush="#385477" BorderThickness="1" CornerRadius="9" Padding="9" Margin="0,3">
+        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+       </Border>
+      </DataTemplate></ListBox.ItemTemplate>
+     </ListBox>
+    </DockPanel>
+   </Border>
+
+   <Border Grid.Column="2" CornerRadius="18" BorderThickness="1" BorderBrush="#6686B7E8" Padding="14">
+    <Border.Background>
+     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+      <GradientStop Color="#A82A3858" Offset="0"/><GradientStop Color="#8019233C" Offset="0.55"/><GradientStop Color="#A8273150" Offset="1"/>
+     </LinearGradientBrush>
+    </Border.Background>
+    <Grid>
+     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+     <DockPanel Margin="6,0,6,12">
+      <TextBlock x:Name="DocumentTitleText" Text="Nouveau document" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center"/>
+      <TextBlock x:Name="EditorHintText" Text="DOCX · sauvegarde automatique" Foreground="#AAB8D8" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+     </DockPanel>
+     <Border Grid.Row="1" Background="#F4F5F8" CornerRadius="12" Padding="20">
+      <RichTextBox x:Name="EditorBox" Background="White" Foreground="#172033" BorderThickness="0"
+                   FontFamily="Segoe UI" FontSize="12" AcceptsTab="True"
+                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                   TextChanged="EditorBox_Changed"/>
+     </Border>
+    </Grid>
+   </Border>
+  </Grid>
+
+  <DockPanel Grid.Row="3" Margin="2,12,2,0">
+   <TextBlock x:Name="StatusText" Foreground="#AAB8D8" VerticalAlignment="Center"/>
+   <Button Content="Tableau de bord" Width="130" DockPanel.Dock="Right" Click="Close_Click"/>
+  </DockPanel>
+ </Grid>
+</UserControl>
