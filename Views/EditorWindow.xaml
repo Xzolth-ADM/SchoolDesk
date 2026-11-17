@@ -66,6 +66,7 @@
                               SelectionChanged="Style_Changed" Margin="0,0,4,0"
                               ToolTip="Style du paragraphe">
                         <ComboBoxItem Content="Texte normal" />
+                        <ComboBoxItem Content="Titre" />
                         <ComboBoxItem Content="Titre 1" />
                         <ComboBoxItem Content="Titre 2" />
                         <ComboBoxItem Content="Titre 3" />
@@ -149,6 +150,52 @@
                     <Button Click="Number_Click" Style="{StaticResource IconOnlyButtonStyle}"
                             ToolTip="Liste numérotée" AutomationProperties.Name="Liste numérotée">
                         <icons:SvgIcon Icon="list-numbered" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                </StackPanel>
+                <Border Width="1" Height="26" Background="{StaticResource BorderBrush}" Margin="8,5" />
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Click="InsertImage_Click" Margin="0,0,4,0"
+                            ToolTip="Insérer une image dans le document"
+                            AutomationProperties.Name="Insérer une image">
+                        <StackPanel Orientation="Horizontal">
+                            <icons:SvgIcon Icon="image" Width="18" Height="18"
+                                           Stroke="{StaticResource AccentBrush}" Margin="0,0,7,0" />
+                            <TextBlock Text="Image" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Click="InsertTableMenu_Click" Margin="0,0,4,0"
+                            ToolTip="Insérer un tableau"
+                            AutomationProperties.Name="Insérer un tableau">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="2 × 2" Tag="2,2" Click="InsertTable_Click" />
+                                <MenuItem Header="3 × 3" Tag="3,3" Click="InsertTable_Click" />
+                                <MenuItem Header="4 × 4" Tag="4,4" Click="InsertTable_Click" />
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                        <StackPanel Orientation="Horizontal">
+                            <icons:SvgIcon Icon="table" Width="18" Height="18"
+                                           Stroke="{StaticResource AccentBrush}" Margin="0,0,7,0" />
+                            <TextBlock Text="Tableau" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Click="InsertShapeMenu_Click"
+                            ToolTip="Insérer une forme"
+                            AutomationProperties.Name="Insérer une forme">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Rectangle" Tag="rectangle" Click="InsertShape_Click" />
+                                <MenuItem Header="Ellipse" Tag="ellipse" Click="InsertShape_Click" />
+                                <MenuItem Header="Flèche" Tag="arrow" Click="InsertShape_Click" />
+                                <MenuItem Header="Ligne" Tag="line" Click="InsertShape_Click" />
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                        <StackPanel Orientation="Horizontal">
+                            <icons:SvgIcon Icon="shapes" Width="18" Height="18"
+                                           Stroke="{StaticResource AccentBrush}" Margin="0,0,7,0" />
+                            <TextBlock Text="Forme" VerticalAlignment="Center" />
+                        </StackPanel>
                     </Button>
                 </StackPanel>
             </WrapPanel>

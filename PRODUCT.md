@@ -26,7 +26,7 @@ Used on a Windows desktop or laptop during the school day and while doing homewo
 
 - The timetable supports A/B weeks and is configured locally per user.
 - The agenda stores dated tasks and completion state.
-- The document editor reads and writes common DOCX content; it is not a full Microsoft Word layout engine.
+- The document editor preserves common DOCX text, heading styles, embedded images, and simple tables. Inserted simple shapes are stored as embedded images; it is not a full Microsoft Word layout engine.
 - User data is stored locally. The application does not require an account, network connection, or cloud service.
 - Windows startup is optional and user-configurable.
 

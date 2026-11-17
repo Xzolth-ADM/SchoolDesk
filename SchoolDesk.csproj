@@ -7,10 +7,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>SchoolDesk</AssemblyName>
     <RootNamespace>SchoolDesk</RootNamespace>
-    <Version>0.5.2</Version>
+    <Version>0.5.3</Version>
+    <ApplicationIcon>Assets\image_1_.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <None Update="Assets\schedule.json" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Remove="Tests\**\*.cs" />
+    <None Remove="Assets\schedule.json" />
+    <Content Include="Assets\schedule.json"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest"
+             ExcludeFromSingleFile="true" />
+    <Resource Include="Assets\image_1_.ico" />
     <EmbeddedResource Include="Assets\schooldesk-icons.svg" LogicalName="SchoolDesk.Assets.schooldesk-icons.svg" />
   </ItemGroup>
 </Project>

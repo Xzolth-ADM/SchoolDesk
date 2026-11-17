@@ -1,5 +1,7 @@
 bin/
 obj/
+Tests/**/bin/
+Tests/**/obj/
 .vs/
 .idea/
 *.user

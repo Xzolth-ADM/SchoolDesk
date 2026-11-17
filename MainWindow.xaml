@@ -1,7 +1,7 @@
 <Window x:Class="SchoolDesk.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SchoolDesk" WindowStyle="None" WindowState="Maximized"
+        Title="SchoolDesk" Icon="/Assets/image_1_.ico" WindowStyle="None" WindowState="Maximized"
         Background="{StaticResource WindowBrush}" Foreground="{StaticResource TextBrush}"
         KeyDown="Window_KeyDown">
     <!-- THESIS: Make the next school task obvious; refuse decorative glass and repeated navigation.
