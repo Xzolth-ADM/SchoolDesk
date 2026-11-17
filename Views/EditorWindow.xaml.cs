@@ -1,6 +1,8 @@
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -22,10 +24,23 @@ public partial class EditorWindow : UserControl
     private bool _dirty;
     private bool _suppressFileSelection;
     private int _editVersion;
-    private int _colorIndex;
-    private int _highlightIndex;
-    private static readonly Brush[] TextPalette = [Brushes.Black, Brushes.DarkRed, Brushes.RoyalBlue, Brushes.DarkGreen, Brushes.DarkOrange, Brushes.MediumVioletRed];
-    private static readonly Brush[] HighlightPalette = [Brushes.Yellow, Brushes.LightGreen, Brushes.LightBlue, Brushes.LightPink, Brushes.Orange];
+    private static readonly (string Name, Brush Brush)[] TextPalette =
+    [
+        ("Noir", Brushes.Black),
+        ("Rouge foncé", Brushes.DarkRed),
+        ("Bleu foncé", Brushes.Navy),
+        ("Vert foncé", Brushes.DarkGreen),
+        ("Brun", Brushes.SaddleBrown),
+        ("Rose", Brushes.MediumVioletRed)
+    ];
+    private static readonly (string Name, Brush Brush)[] HighlightPalette =
+    [
+        ("Jaune", Brushes.Yellow),
+        ("Vert clair", Brushes.LightGreen),
+        ("Bleu clair", Brushes.LightBlue),
+        ("Rose clair", Brushes.LightPink),
+        ("Orange", Brushes.Orange)
+    ];
 
     public EditorWindow()
     {
@@ -51,9 +66,9 @@ public partial class EditorWindow : UserControl
 
     private static FlowDocument CreateDocument() => new()
     {
-        PagePadding = new Thickness(52, 44, 52, 44),
+        PagePadding = new Thickness(96),
         FontFamily = new FontFamily("Segoe UI"),
-        FontSize = 12,
+        FontSize = 16,
         Foreground = Brushes.Black
     };
 
@@ -64,6 +79,7 @@ public partial class EditorWindow : UserControl
         _currentPath = null;
         FileNameBox.Text = "Nouveau document";
         EditorBox.Document = CreateDocument();
+        UpdatePageWidth();
         _loading = false;
         _dirty = false;
         _autosave.Stop();
@@ -116,6 +132,7 @@ public partial class EditorWindow : UserControl
             }
             _loading = true;
             EditorBox.Document = imported.Document;
+            UpdatePageWidth();
             _currentPath = path;
             FileNameBox.Text = Path.GetFileNameWithoutExtension(path);
             _loading = false;
@@ -148,6 +165,7 @@ public partial class EditorWindow : UserControl
             var version = _editVersion;
             var snapshot = EditorBox.Document;
             SaveButton.IsEnabled = false;
+            EditorToolbar.IsEnabled = false;
             EditorSurface.IsEnabled = false;
             HeaderActions.IsEnabled = false;
             EditorHintText.Text = "Enregistrement…";
@@ -169,6 +187,7 @@ public partial class EditorWindow : UserControl
         finally
         {
             SaveButton.IsEnabled = true;
+            EditorToolbar.IsEnabled = true;
             EditorSurface.IsEnabled = true;
             HeaderActions.IsEnabled = true;
             _saveLock.Release();
@@ -214,6 +233,28 @@ public partial class EditorWindow : UserControl
     }
 
     public Task<bool> PrepareToLeaveAsync() => ConfirmLeaveCurrentAsync();
+
+    public async Task<bool> PrepareDocumentDeletionAsync(string path)
+    {
+        if (!string.Equals(_currentPath, path, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (!await ConfirmLeaveCurrentAsync())
+            return false;
+
+        _loading = true;
+        _currentPath = null;
+        FileNameBox.Text = "Nouveau document";
+        EditorBox.Document = CreateDocument();
+        UpdatePageWidth();
+        _loading = false;
+        _dirty = false;
+        _autosave.Stop();
+        UpdateDocumentTitle();
+        EditorHintText.Text = "DOCX · sauvegarde automatique";
+        StatusText.Text = "Document fermé avant sa suppression.";
+        RefreshFiles();
+        return true;
+    }
 
     private async void Close_Click(object sender, RoutedEventArgs e)
     {
@@ -310,16 +351,52 @@ public partial class EditorWindow : UserControl
         EditorBox.Focus();
     }
 
-    private void Color_Click(object sender, RoutedEventArgs e)
-    {
-        EditorBox.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, TextPalette[_colorIndex++ % TextPalette.Length]);
-        EditorBox.Focus();
-    }
+    private void Color_Click(object sender, RoutedEventArgs e) =>
+        ShowColorPalette(sender, TextPalette, TextElement.ForegroundProperty);
 
-    private void Highlight_Click(object sender, RoutedEventArgs e)
+    private void Highlight_Click(object sender, RoutedEventArgs e) =>
+        ShowColorPalette(sender, HighlightPalette, TextElement.BackgroundProperty);
+
+    private void ShowColorPalette(object sender, (string Name, Brush Brush)[] colors, DependencyProperty property)
     {
-        EditorBox.Selection.ApplyPropertyValue(TextElement.BackgroundProperty, HighlightPalette[_highlightIndex++ % HighlightPalette.Length]);
-        EditorBox.Focus();
+        if (sender is not Button button) return;
+        var palette = new ContextMenu
+        {
+            PlacementTarget = button,
+            Placement = PlacementMode.Bottom
+        };
+        foreach (var color in colors)
+        {
+            var item = new MenuItem
+            {
+                Header = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Children =
+                    {
+                        new Border
+                        {
+                            Width = 16,
+                            Height = 16,
+                            Background = color.Brush,
+                            BorderBrush = (Brush)FindResource("BorderBrush"),
+                            BorderThickness = new Thickness(1),
+                            CornerRadius = new CornerRadius(2),
+                            Margin = new Thickness(0, 0, 8, 0)
+                        },
+                        new TextBlock { Text = color.Name, VerticalAlignment = VerticalAlignment.Center }
+                    }
+                }
+            };
+            item.Click += (_, _) =>
+            {
+                EditorBox.Selection.ApplyPropertyValue(property, color.Brush);
+                EditorBox.Focus();
+                MarkFormatted();
+            };
+            palette.Items.Add(item);
+        }
+        palette.IsOpen = true;
     }
 
     private void Style_Changed(object sender, SelectionChangedEventArgs e)
@@ -327,10 +404,10 @@ public partial class EditorWindow : UserControl
         if (!IsLoaded || StyleBox.SelectedItem is not ComboBoxItem item || EditorBox.CaretPosition.Paragraph is not Paragraph paragraph) return;
         switch (item.Content?.ToString())
         {
-            case "Titre 1": paragraph.FontSize = 26; paragraph.FontWeight = FontWeights.Bold; paragraph.Margin = new Thickness(0, 18, 0, 9); break;
-            case "Titre 2": paragraph.FontSize = 21; paragraph.FontWeight = FontWeights.Bold; paragraph.Margin = new Thickness(0, 15, 0, 8); break;
-            case "Titre 3": paragraph.FontSize = 17; paragraph.FontWeight = FontWeights.SemiBold; paragraph.Margin = new Thickness(0, 12, 0, 6); break;
-            default: paragraph.FontSize = 12; paragraph.FontWeight = FontWeights.Normal; paragraph.Foreground = Brushes.Black; paragraph.Margin = new Thickness(0, 0, 0, 8); break;
+            case "Titre 1": paragraph.FontSize = 26 * 96d / 72d; paragraph.FontWeight = FontWeights.Bold; paragraph.Margin = new Thickness(0, 18, 0, 9); break;
+            case "Titre 2": paragraph.FontSize = 21 * 96d / 72d; paragraph.FontWeight = FontWeights.Bold; paragraph.Margin = new Thickness(0, 15, 0, 8); break;
+            case "Titre 3": paragraph.FontSize = 17 * 96d / 72d; paragraph.FontWeight = FontWeights.SemiBold; paragraph.Margin = new Thickness(0, 12, 0, 6); break;
+            default: paragraph.FontSize = 12 * 96d / 72d; paragraph.FontWeight = FontWeights.Normal; paragraph.Foreground = Brushes.Black; paragraph.Margin = new Thickness(0, 0, 0, 8); break;
         }
         MarkFormatted();
     }
@@ -344,8 +421,9 @@ public partial class EditorWindow : UserControl
 
     private void Size_Changed(object sender, SelectionChangedEventArgs e)
     {
-        if (!IsLoaded || SizeBox.SelectedItem is not ComboBoxItem item || !double.TryParse(item.Content?.ToString(), out var size)) return;
-        EditorBox.Selection.ApplyPropertyValue(TextElement.FontSizeProperty, size);
+        if (!IsLoaded || SizeBox.SelectedItem is not ComboBoxItem item ||
+            !double.TryParse(item.Content?.ToString(), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var points)) return;
+        EditorBox.Selection.ApplyPropertyValue(TextElement.FontSizeProperty, points * 96d / 72d);
         MarkFormatted();
     }
 
@@ -368,6 +446,14 @@ public partial class EditorWindow : UserControl
     private void Justify_Click(object sender, RoutedEventArgs e) => EditingCommands.AlignJustify.Execute(null, EditorBox);
     private void Bullet_Click(object sender, RoutedEventArgs e) => EditingCommands.ToggleBullets.Execute(null, EditorBox);
     private void Number_Click(object sender, RoutedEventArgs e) => EditingCommands.ToggleNumbering.Execute(null, EditorBox);
+
+    private void EditorBox_SizeChanged(object sender, SizeChangedEventArgs e) => UpdatePageWidth();
+
+    private void UpdatePageWidth()
+    {
+        if (EditorBox?.Document is null || EditorBox.ActualWidth <= 0) return;
+        EditorBox.Document.PageWidth = Math.Min(816, Math.Max(240, EditorBox.ActualWidth - 2));
+    }
 
     private async void Window_KeyDown(object sender, KeyEventArgs e)
     {

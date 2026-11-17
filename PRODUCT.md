@@ -4,7 +4,7 @@
 
 ## Platform
 
-Windows 11 desktop application built with C#/.NET 8 and WPF.
+Windows 11 desktop interface with a clear, light, matte visual language.
 
 ## Users
 

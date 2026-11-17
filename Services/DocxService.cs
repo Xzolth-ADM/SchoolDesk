@@ -1,5 +1,6 @@
 using System.IO;
 using System.IO.Compression;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
@@ -16,6 +17,9 @@ public sealed class DocxService
     private static readonly XNamespace R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
     private static readonly XNamespace ContentTypes = "http://schemas.openxmlformats.org/package/2006/content-types";
     private static readonly XNamespace PackageRelationships = "http://schemas.openxmlformats.org/package/2006/relationships";
+    private const double DipsPerPoint = 96d / 72d;
+
+    private static double PointsToDips(double points) => points * DipsPerPoint;
 
     public async Task<DocxImportResult> ImportAsync(string path)
     {
@@ -41,7 +45,7 @@ public sealed class DocxService
     private static FlowDocument Import(XDocument xml)
     {
         var body = xml.Root?.Element(W + "body") ?? throw new InvalidDataException("Structure DOCX invalide.");
-        var document = new FlowDocument { PagePadding = new Thickness(65), FontFamily = new FontFamily("Segoe UI"), FontSize = 12 };
+        var document = new FlowDocument { PagePadding = new Thickness(96), FontFamily = new FontFamily("Segoe UI"), FontSize = PointsToDips(12) };
         foreach (var node in body.Elements())
         {
             if (node.Name == W + "p") document.Blocks.Add(ReadParagraph(node));
@@ -56,9 +60,9 @@ public sealed class DocxService
         var p = new Paragraph { Margin = new Thickness(0, 0, 0, 8) };
         var pPr = element.Element(W + "pPr");
         var style = (string?)pPr?.Element(W + "pStyle")?.Attribute(W + "val") ?? "";
-        if (style.Contains("Heading1", StringComparison.OrdinalIgnoreCase)) { p.FontSize = 24; p.FontWeight = FontWeights.Bold; p.Margin = new Thickness(0, 14, 0, 8); }
-        else if (style.Contains("Heading2", StringComparison.OrdinalIgnoreCase)) { p.FontSize = 19; p.FontWeight = FontWeights.Bold; p.Margin = new Thickness(0, 12, 0, 7); }
-        else if (style.Contains("Heading3", StringComparison.OrdinalIgnoreCase)) { p.FontSize = 16; p.FontWeight = FontWeights.Bold; }
+        if (style.Contains("Heading1", StringComparison.OrdinalIgnoreCase)) { p.FontSize = PointsToDips(24); p.FontWeight = FontWeights.Bold; p.Margin = new Thickness(0, 14, 0, 8); }
+        else if (style.Contains("Heading2", StringComparison.OrdinalIgnoreCase)) { p.FontSize = PointsToDips(19); p.FontWeight = FontWeights.Bold; p.Margin = new Thickness(0, 12, 0, 7); }
+        else if (style.Contains("Heading3", StringComparison.OrdinalIgnoreCase)) { p.FontSize = PointsToDips(16); p.FontWeight = FontWeights.Bold; }
         var jc = (string?)pPr?.Element(W + "jc")?.Attribute(W + "val");
         p.TextAlignment = jc switch { "center" => TextAlignment.Center, "right" => TextAlignment.Right, "both" => TextAlignment.Justify, _ => TextAlignment.Left };
         var indent = (string?)pPr?.Element(W + "ind")?.Attribute(W + "left");
@@ -97,7 +101,8 @@ public sealed class DocxService
             inline.Background = brush;
         }
         var size = (string?)rPr?.Element(W + "sz")?.Attribute(W + "val");
-        if (double.TryParse(size, out var halfPoints)) inline.FontSize = halfPoints / 2;
+        if (double.TryParse(size, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var halfPoints))
+            inline.FontSize = PointsToDips(halfPoints / 2);
         var font = (string?)rPr?.Element(W + "rFonts")?.Attribute(W + "ascii");
         if (!string.IsNullOrWhiteSpace(font)) inline.FontFamily = new FontFamily(font);
         if (hyperlink) { inline.Foreground = Brushes.DeepSkyBlue; inline.TextDecorations = TextDecorations.Underline; }
@@ -169,9 +174,9 @@ public sealed class DocxService
     private static async Task<XElement> WriteParagraphAsync(Paragraph paragraph, string prefix = "")
     {
         var props = new XElement(W + "pPr");
-        if (paragraph.FontSize >= 22) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading1")));
-        else if (paragraph.FontSize >= 18) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading2")));
-        else if (paragraph.FontSize >= 15) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading3")));
+        if (paragraph.FontSize >= PointsToDips(22)) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading1")));
+        else if (paragraph.FontSize >= PointsToDips(18)) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading2")));
+        else if (paragraph.FontSize >= PointsToDips(15)) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading3")));
         var align = paragraph.TextAlignment switch { TextAlignment.Center => "center", TextAlignment.Right => "right", TextAlignment.Justify => "both", _ => "left" };
         if (align != "left") props.Add(new XElement(W + "jc", new XAttribute(W + "val", align)));
         var result = new XElement(W + "p", props);
@@ -236,9 +241,9 @@ public sealed class DocxService
     private static XElement WriteParagraph(Paragraph p, string prefix = "")
     {
         var props = new XElement(W + "pPr");
-        if (p.FontSize >= 22) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading1")));
-        else if (p.FontSize >= 18) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading2")));
-        else if (p.FontSize >= 15) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading3")));
+        if (p.FontSize >= PointsToDips(22)) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading1")));
+        else if (p.FontSize >= PointsToDips(18)) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading2")));
+        else if (p.FontSize >= PointsToDips(15)) props.Add(new XElement(W + "pStyle", new XAttribute(W + "val", "Heading3")));
         var align = p.TextAlignment switch { TextAlignment.Center => "center", TextAlignment.Right => "right", TextAlignment.Justify => "both", _ => "left" };
         if (align != "left") props.Add(new XElement(W + "jc", new XAttribute(W + "val", align)));
         var result = new XElement(W + "p", props);
@@ -278,7 +283,9 @@ public sealed class DocxService
             var color = bg.Color == Colors.Yellow ? "yellow" : bg.Color == Colors.LightGreen ? "green" : bg.Color == Colors.LightBlue ? "cyan" : "magenta";
             rPr.Add(new XElement(W + "highlight", new XAttribute(W + "val", color)));
         }
-        if (inline.FontSize > 0) rPr.Add(new XElement(W + "sz", new XAttribute(W + "val", Math.Round(inline.FontSize * 2))));
+        if (inline.FontSize > 0)
+            rPr.Add(new XElement(W + "sz", new XAttribute(W + "val",
+                Math.Round(inline.FontSize / DipsPerPoint * 2, MidpointRounding.AwayFromZero))));
         if (inline.FontFamily is not null) rPr.Add(new XElement(W + "rFonts", new XAttribute(W + "ascii", inline.FontFamily.Source), new XAttribute(W + "hAnsi", inline.FontFamily.Source)));
         var r = new XElement(W + "r"); if (rPr.HasElements) r.Add(rPr);
         r.Add(new XElement(W + "t", new XAttribute(XNamespace.Xml + "space", "preserve"), text ?? ""));

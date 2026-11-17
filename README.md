@@ -1,4 +1,4 @@
-# SchoolDesk 0.5.1
+# SchoolDesk 0.5.2
 
 Application scolaire native Windows 11 en C# / .NET 8 / WPF. Fonctionnement local, sans serveur ni dépendance réseau.
 
@@ -10,8 +10,9 @@ Application scolaire native Windows 11 en C# / .NET 8 / WPF. Fonctionnement loca
 - Agenda filtrable par jour, semaine (lundi à dimanche) ou mois ; l'heure d'une tâche est facultative.
 - Liste des matières préremplies depuis l'emploi du temps, modifiable dans Paramètres. Retirer une matière ne supprime aucun fichier existant.
 - Espace documentaire classé par matière et catégorie.
-- Explorateur des documents DOCX classés et notes rapides locales avec sauvegarde automatique.
+- Explorateur des documents DOCX classés avec recherche, taille, date de modification et suppression réversible via la Corbeille Windows ; notes rapides locales avec sauvegarde automatique.
 - Éditeur WYSIWYG WPF : rédaction directement visuelle, sans syntaxe Markdown, avec gras, italique, souligné, barré, couleurs, surlignage, styles de titres, polices, tailles, alignements, listes à puces et numérotées, annuler/rétablir.
+- Outils DOCX regroupés et identifiés par icônes SVG intégrées, avec raccourcis visibles, surface d’écriture lisible et tailles de police cohérentes entre l’éditeur WPF et Word.
 - Interface claire et épurée : surfaces mates, navigation latérale, contrôles cohérents et accent bleu discret.
 - Navigation intégrée dans une fenêtre unique : tableau de bord, agenda, documents, explorateur, notes et paramètres sont affichés dans la zone principale, sans fenêtres de module séparées.
 - Emploi du temps personnalisable pour chaque utilisateur depuis Paramètres ; le fichier personnel est conservé dans `%LOCALAPPDATA%\\SchoolDesk\\schedule.json` et n'est jamais partagé avec le dépôt.

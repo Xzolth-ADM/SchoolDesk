@@ -156,6 +156,13 @@ public partial class MainWindow : Window
         SetNavigationSelection(_currentPage);
     }
 
+    public async Task<bool> PrepareDocumentForDeletionAsync(string path)
+    {
+        if (_pages.TryGetValue("editor", out var page) && page is EditorWindow editor)
+            return await editor.PrepareDocumentDeletionAsync(path);
+        return true;
+    }
+
     private async Task NavigateToPageAsync(string page)
     {
         if (_currentPage == page) return;

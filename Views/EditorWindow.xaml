@@ -1,106 +1,240 @@
 <UserControl x:Class="SchoolDesk.Views.EditorWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Background="Transparent" Foreground="{StaticResource TextBrush}" KeyDown="Window_KeyDown">
- <Grid Margin="24">
-  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-  <DockPanel Margin="0,0,0,16">
-   <StackPanel>
-    <TextBlock Text="Documents" FontSize="28" FontWeight="SemiBold"/>
-    <TextBlock Text="Écrire et modifier des fichiers Word" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0"/>
-   </StackPanel>
-   <StackPanel x:Name="HeaderActions" DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-    <Button Content="Nouveau" Click="New_Click"/>
-    <Button Content="Ouvrir" Click="Open_Click"/>
-    <Button x:Name="SaveButton" Content="Enregistrer" Click="Save_Click"
-            Style="{StaticResource PrimaryButtonStyle}"/>
-   </StackPanel>
-  </DockPanel>
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:SchoolDesk.Controls"
+             Background="Transparent" Foreground="{StaticResource TextBrush}"
+             KeyDown="Window_KeyDown">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-  <Border Grid.Row="1" CornerRadius="5" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}"
-          Background="{StaticResource SubtleSurfaceBrush}" Padding="8" Margin="0,0,0,14">
-   <DockPanel>
-    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-     <Button Content="↶" ToolTip="Annuler" Click="Undo_Click" FontSize="18" Width="40"/>
-     <Button Content="↷" ToolTip="Rétablir" Click="Redo_Click" FontSize="18" Width="40"/>
-     <Separator Margin="7,5"/>
-     <ComboBox x:Name="StyleBox" Width="120" SelectedIndex="0" SelectionChanged="Style_Changed" Margin="3">
-      <ComboBoxItem Content="Texte normal"/><ComboBoxItem Content="Titre 1"/><ComboBoxItem Content="Titre 2"/><ComboBoxItem Content="Titre 3"/>
-     </ComboBox>
-     <ComboBox x:Name="FontBox" Width="142" SelectedIndex="0" SelectionChanged="Font_Changed" Margin="3">
-      <ComboBoxItem Content="Segoe UI"/><ComboBoxItem Content="Arial"/><ComboBoxItem Content="Calibri"/><ComboBoxItem Content="Times New Roman"/><ComboBoxItem Content="Georgia"/>
-     </ComboBox>
-     <ComboBox x:Name="SizeBox" Width="68" SelectedIndex="2" SelectionChanged="Size_Changed" Margin="3">
-      <ComboBoxItem Content="10"/><ComboBoxItem Content="11"/><ComboBoxItem Content="12"/><ComboBoxItem Content="14"/><ComboBoxItem Content="16"/><ComboBoxItem Content="18"/><ComboBoxItem Content="24"/><ComboBoxItem Content="36"/>
-     </ComboBox>
-    </StackPanel>
-    <WrapPanel VerticalAlignment="Center">
-     <Button Content="G" FontWeight="Bold" Click="Bold_Click" Width="38"/>
-     <Button Content="I" FontStyle="Italic" Click="Italic_Click" Width="38"/>
-     <Button Content="S̲" Click="Underline_Click" Width="38"/>
-     <Button Content="abc̶" Click="Strike_Click" Width="44"/>
-     <Button Content="Couleur" Click="Color_Click"/>
-     <Button Content="Surligner" Click="Highlight_Click"/>
-     <Button Content="Gauche" Click="Left_Click"/>
-     <Button Content="Centre" Click="Center_Click"/>
-     <Button Content="Droite" Click="Right_Click"/>
-     <Button Content="Justifier" Click="Justify_Click"/>
-     <Button Content="• Liste" Click="Bullet_Click"/>
-     <Button Content="1. Liste" Click="Number_Click"/>
-    </WrapPanel>
-   </DockPanel>
-  </Border>
+        <DockPanel Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Documents" FontSize="28" FontWeight="SemiBold" />
+                <TextBlock Text="Écrire et modifier des fichiers Word"
+                           Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0" />
+            </StackPanel>
+            <StackPanel x:Name="HeaderActions" DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Click="New_Click" Margin="0,0,8,0" ToolTip="Créer un document (Ctrl+N)"
+                        AutomationProperties.Name="Nouveau document">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:SvgIcon Icon="new-document" Width="16" Height="16"
+                                       Stroke="{StaticResource AccentBrush}" Margin="0,0,8,0" />
+                        <TextBlock Text="Nouveau" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Click="Open_Click" Margin="0,0,8,0" ToolTip="Ouvrir un fichier DOCX (Ctrl+O)"
+                        AutomationProperties.Name="Ouvrir un document">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:SvgIcon Icon="open-folder" Width="16" Height="16"
+                                       Stroke="{StaticResource AccentBrush}" Margin="0,0,8,0" />
+                        <TextBlock Text="Ouvrir" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="SaveButton" Click="Save_Click" Style="{StaticResource PrimaryButtonStyle}"
+                        ToolTip="Enregistrer le document (Ctrl+S)" AutomationProperties.Name="Enregistrer le document">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:SvgIcon Icon="save" Width="16" Height="16" Stroke="White" Margin="0,0,8,0" />
+                        <TextBlock Text="Enregistrer" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </DockPanel>
 
-  <Grid x:Name="EditorSurface" Grid.Row="2">
-   <Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-   <Border Grid.Column="0" CornerRadius="5" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}"
-           Background="{StaticResource SurfaceBrush}" Padding="14">
-    <DockPanel>
-     <StackPanel DockPanel.Dock="Top">
-      <TextBlock Text="Classer le document" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold" Margin="2,0,0,12"/>
-      <TextBlock Text="Matière" Foreground="{StaticResource MutedBrush}"/>
-      <ComboBox x:Name="SubjectBox" SelectionChanged="Metadata_Changed" Margin="0,5,0,12"/>
-      <TextBlock Text="Catégorie" Foreground="{StaticResource MutedBrush}"/>
-      <ComboBox x:Name="TypeBox" SelectedIndex="0" SelectionChanged="Metadata_Changed" Margin="0,5,0,12">
-       <ComboBoxItem Content="Cours"/><ComboBoxItem Content="Devoir"/><ComboBoxItem Content="Évaluation"/><ComboBoxItem Content="DM"/>
-      </ComboBox>
-      <TextBlock Text="Nom du document" Foreground="{StaticResource MutedBrush}"/>
-      <TextBox x:Name="FileNameBox" Text="Nouveau document" TextChanged="FileName_Changed" Margin="0,5,0,8"/>
-      <TextBlock Text="Mes documents" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold" Margin="2,14,0,6"/>
-     </StackPanel>
-     <ListBox x:Name="FilesList" SelectionChanged="FilesList_Changed">
-      <ListBox.ItemTemplate><DataTemplate>
-       <Border Background="#F8F9FB" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="4" Padding="9" Margin="0,3">
-        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
-       </Border>
-      </DataTemplate></ListBox.ItemTemplate>
-     </ListBox>
-    </DockPanel>
-   </Border>
+        <Border x:Name="EditorToolbar" Grid.Row="1" Background="{StaticResource SubtleSurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                CornerRadius="5" Padding="8" Margin="0,0,0,14">
+            <WrapPanel VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
+                    <Button Click="Undo_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Annuler" AutomationProperties.Name="Annuler">
+                        <icons:SvgIcon Icon="undo" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Redo_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Rétablir" AutomationProperties.Name="Rétablir">
+                        <icons:SvgIcon Icon="redo" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                </StackPanel>
+                <Border Width="1" Height="26" Background="{StaticResource BorderBrush}" Margin="0,5,8,5" />
 
-   <Border Grid.Column="2" CornerRadius="5" BorderThickness="1" BorderBrush="{StaticResource BorderBrush}"
-           Background="{StaticResource SurfaceBrush}" Padding="14">
-    <Grid>
-     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-     <DockPanel Margin="6,0,6,12">
-      <TextBlock x:Name="DocumentTitleText" Text="Nouveau document" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center"/>
-      <TextBlock x:Name="EditorHintText" Text="DOCX · sauvegarde automatique"
-                 Foreground="{StaticResource MutedBrush}" DockPanel.Dock="Right" VerticalAlignment="Center"/>
-     </DockPanel>
-     <Border Grid.Row="1" Background="#F1F3F6" CornerRadius="4" Padding="20">
-      <RichTextBox x:Name="EditorBox" Background="White" Foreground="#20242A" BorderThickness="1"
-                   BorderBrush="{StaticResource BorderBrush}"
-                   FontFamily="Segoe UI" FontSize="12" AcceptsTab="True"
-                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                   TextChanged="EditorBox_Changed"/>
-     </Border>
+                <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
+                    <ComboBox x:Name="StyleBox" Width="124" SelectedIndex="0"
+                              SelectionChanged="Style_Changed" Margin="0,0,4,0"
+                              ToolTip="Style du paragraphe">
+                        <ComboBoxItem Content="Texte normal" />
+                        <ComboBoxItem Content="Titre 1" />
+                        <ComboBoxItem Content="Titre 2" />
+                        <ComboBoxItem Content="Titre 3" />
+                    </ComboBox>
+                    <ComboBox x:Name="FontBox" Width="138" SelectedIndex="0"
+                              SelectionChanged="Font_Changed" Margin="0,0,4,0"
+                              ToolTip="Police de caractères">
+                        <ComboBoxItem Content="Segoe UI" />
+                        <ComboBoxItem Content="Arial" />
+                        <ComboBoxItem Content="Calibri" />
+                        <ComboBoxItem Content="Times New Roman" />
+                        <ComboBoxItem Content="Georgia" />
+                    </ComboBox>
+                    <ComboBox x:Name="SizeBox" Width="68" SelectedIndex="2"
+                              SelectionChanged="Size_Changed" ToolTip="Taille en points">
+                        <ComboBoxItem Content="10" />
+                        <ComboBoxItem Content="11" />
+                        <ComboBoxItem Content="12" />
+                        <ComboBoxItem Content="14" />
+                        <ComboBoxItem Content="16" />
+                        <ComboBoxItem Content="18" />
+                        <ComboBoxItem Content="24" />
+                        <ComboBoxItem Content="36" />
+                    </ComboBox>
+                </StackPanel>
+                <Border Width="1" Height="26" Background="{StaticResource BorderBrush}" Margin="0,5,8,5" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
+                    <Button Click="Bold_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Gras" AutomationProperties.Name="Gras">
+                        <icons:SvgIcon Icon="bold" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Italic_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Italique" AutomationProperties.Name="Italique">
+                        <icons:SvgIcon Icon="italic" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Underline_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Souligné" AutomationProperties.Name="Souligné">
+                        <icons:SvgIcon Icon="underline" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Strike_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Barré" AutomationProperties.Name="Barré">
+                        <icons:SvgIcon Icon="strike" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                </StackPanel>
+                <Border Width="1" Height="26" Background="{StaticResource BorderBrush}" Margin="0,5,8,5" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
+                    <Button Click="Color_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Choisir la couleur du texte" AutomationProperties.Name="Couleur du texte">
+                        <icons:SvgIcon Icon="text-color" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Highlight_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Choisir le surlignage" AutomationProperties.Name="Surlignage">
+                        <icons:SvgIcon Icon="highlight" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                </StackPanel>
+                <Border Width="1" Height="26" Background="{StaticResource BorderBrush}" Margin="0,5,8,5" />
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Click="Left_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Aligner à gauche" AutomationProperties.Name="Aligner à gauche">
+                        <icons:SvgIcon Icon="align-left" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Center_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Centrer" AutomationProperties.Name="Centrer">
+                        <icons:SvgIcon Icon="align-center" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Right_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Aligner à droite" AutomationProperties.Name="Aligner à droite">
+                        <icons:SvgIcon Icon="align-right" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Justify_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Justifier" AutomationProperties.Name="Justifier">
+                        <icons:SvgIcon Icon="align-justify" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Bullet_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Liste à puces" AutomationProperties.Name="Liste à puces">
+                        <icons:SvgIcon Icon="list-bullets" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                    <Button Click="Number_Click" Style="{StaticResource IconOnlyButtonStyle}"
+                            ToolTip="Liste numérotée" AutomationProperties.Name="Liste numérotée">
+                        <icons:SvgIcon Icon="list-numbered" Width="18" Height="18" Stroke="{StaticResource AccentBrush}" />
+                    </Button>
+                </StackPanel>
+            </WrapPanel>
+        </Border>
+
+        <Grid x:Name="EditorSurface" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="228" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="5" Padding="14">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Classer le document" Foreground="{StaticResource MutedBrush}"
+                                   FontWeight="SemiBold" Margin="2,0,0,12" />
+                        <TextBlock Text="Matière" Foreground="{StaticResource MutedBrush}" />
+                        <ComboBox x:Name="SubjectBox" SelectionChanged="Metadata_Changed"
+                                  Margin="0,5,0,12" />
+                        <TextBlock Text="Catégorie" Foreground="{StaticResource MutedBrush}" />
+                        <ComboBox x:Name="TypeBox" SelectedIndex="0" SelectionChanged="Metadata_Changed"
+                                  Margin="0,5,0,12">
+                            <ComboBoxItem Content="Cours" />
+                            <ComboBoxItem Content="Devoir" />
+                            <ComboBoxItem Content="Évaluation" />
+                            <ComboBoxItem Content="DM" />
+                        </ComboBox>
+                        <TextBlock Text="Nom du document" Foreground="{StaticResource MutedBrush}" />
+                        <TextBox x:Name="FileNameBox" Text="Nouveau document"
+                                 TextChanged="FileName_Changed" Margin="0,5,0,8" />
+                        <TextBlock Text="Mes documents" Foreground="{StaticResource TextBrush}"
+                                   FontWeight="SemiBold" Margin="2,14,0,6" />
+                    </StackPanel>
+                    <ListBox x:Name="FilesList" SelectionChanged="FilesList_Changed"
+                             BorderThickness="0" Background="Transparent">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F8F9FB" BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1" CornerRadius="4" Padding="9" Margin="0,3">
+                                    <DockPanel>
+                                        <icons:SvgIcon Icon="document" Width="17" Height="17"
+                                                       Stroke="{StaticResource AccentBrush}"
+                                                       Margin="0,0,8,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"
+                                                   VerticalAlignment="Center" />
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Column="2" Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="5" Padding="14">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <DockPanel Margin="6,0,6,12">
+                        <TextBlock x:Name="DocumentTitleText" Text="Nouveau document" FontSize="17"
+                                   FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <TextBlock x:Name="EditorHintText" Text="DOCX · sauvegarde automatique"
+                                   Foreground="{StaticResource MutedBrush}" DockPanel.Dock="Right"
+                                   VerticalAlignment="Center" Margin="12,0,0,0" />
+                    </DockPanel>
+                    <Border Grid.Row="1" Background="{StaticResource SubtleSurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                            CornerRadius="4" Padding="12">
+                        <RichTextBox x:Name="EditorBox" MaxWidth="816" HorizontalAlignment="Center"
+                                     Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextBrush}"
+                                     BorderThickness="1" BorderBrush="{StaticResource BorderBrush}"
+                                     FontFamily="Segoe UI" FontSize="16" AcceptsTab="True"
+                                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                     TextChanged="EditorBox_Changed" SizeChanged="EditorBox_SizeChanged" />
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <DockPanel Grid.Row="3" Margin="2,12,2,0">
+            <TextBlock x:Name="StatusText" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" />
+            <Button Content="Tableau de bord" Width="130" DockPanel.Dock="Right" Click="Close_Click" />
+        </DockPanel>
     </Grid>
-   </Border>
-  </Grid>
-
-  <DockPanel Grid.Row="3" Margin="2,12,2,0">
-   <TextBlock x:Name="StatusText" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
-   <Button Content="Tableau de bord" Width="130" DockPanel.Dock="Right" Click="Close_Click"/>
-  </DockPanel>
- </Grid>
 </UserControl>
