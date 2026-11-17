@@ -1,4 +1,4 @@
-# SchoolDesk 0.5.0
+# SchoolDesk 0.5.1
 
 Application scolaire native Windows 11 en C# / .NET 8 / WPF. Fonctionnement local, sans serveur ni dépendance réseau.
 
@@ -12,10 +12,10 @@ Application scolaire native Windows 11 en C# / .NET 8 / WPF. Fonctionnement loca
 - Espace documentaire classé par matière et catégorie.
 - Explorateur des documents DOCX classés et notes rapides locales avec sauvegarde automatique.
 - Éditeur WYSIWYG WPF : rédaction directement visuelle, sans syntaxe Markdown, avec gras, italique, souligné, barré, couleurs, surlignage, styles de titres, polices, tailles, alignements, listes à puces et numérotées, annuler/rétablir.
-- Interface Liquid Glass : arrière-plan système Acrylic/Mica de Windows 11 quand disponible, avec surfaces translucides de repli.
+- Interface claire et épurée : surfaces mates, navigation latérale, contrôles cohérents et accent bleu discret.
 - Navigation intégrée dans une fenêtre unique : tableau de bord, agenda, documents, explorateur, notes et paramètres sont affichés dans la zone principale, sans fenêtres de module séparées.
 - Emploi du temps personnalisable pour chaque utilisateur depuis Paramètres ; le fichier personnel est conservé dans `%LOCALAPPDATA%\\SchoolDesk\\schedule.json` et n'est jamais partagé avec le dépôt.
-- Contraste renforcé pour les listes déroulantes et menus ; fond opaque sur toute la fenêtre maximisée pour supprimer le liseré noir.
+- Contraste renforcé pour les listes déroulantes et menus ; fond clair opaque sur toute la fenêtre maximisée.
 - Éditeur avec commandes de mise en forme regroupées et raccourcis Ctrl+N, Ctrl+O et Ctrl+S.
 - Ouverture DOCX asynchrone et export ZIP en arrière-plan, génération XML fractionnée pour laisser respirer l'interface ; sauvegarde automatique uniquement après modification, sans réécritures périodiques à vide.
 - Journal des erreurs inattendues dans `%LOCALAPPDATA%\\SchoolDesk\\errors.log`.

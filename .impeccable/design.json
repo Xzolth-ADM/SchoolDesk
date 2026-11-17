@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-17T00:00:00.000Z",
+  "title": "Design System: SchoolDesk",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "School Blue",
+        "canonical": "#315A9B",
+        "tonalRamp": ["#0B1423", "#13243F", "#1D365F", "#27477A", "#315A9B", "#6582B1", "#A3B4D0", "#E7EDF7"]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Deeper School Blue",
+        "canonical": "#264B88",
+        "tonalRamp": ["#09111F", "#101F39", "#1A3158", "#203F70", "#264B88", "#607BAB", "#9EAFCC", "#E4EAF4"]
+      },
+      "primary-subtle": {
+        "role": "neutral",
+        "displayName": "Blue Wash",
+        "canonical": "#E7EDF7",
+        "tonalRamp": ["#1E2938", "#3B4A61", "#64748B", "#93A1B5", "#B6C2D3", "#CDD7E5", "#DCE4EF", "#E7EDF7"]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Window Mist",
+        "canonical": "#F4F6F8",
+        "tonalRamp": ["#1B1D20", "#383C42", "#595F68", "#7B838D", "#A1A7B0", "#C2C7CE", "#DDE1E6", "#F4F6F8"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#1C1C1C", "#3A3A3A", "#5C5C5C", "#808080", "#A5A5A5", "#C7C7C7", "#E3E3E3", "#FFFFFF"]
+      },
+      "subtle-surface": {
+        "role": "neutral",
+        "displayName": "Soft Slate",
+        "canonical": "#F0F2F5",
+        "tonalRamp": ["#1C1D1F", "#383B40", "#585D65", "#7B818A", "#A0A5AD", "#C0C5CC", "#DBDFE5", "#F0F2F5"]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#20242A",
+        "tonalRamp": ["#08090A", "#101215", "#181B20", "#20242A", "#45494F", "#73777D", "#B0B2B6", "#F2F2F3"]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Slate Text",
+        "canonical": "#5F6875",
+        "tonalRamp": ["#141619", "#292D33", "#424851", "#5F6875", "#7F8792", "#A2A8B0", "#C9CDD2", "#F0F1F2"]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Cool Border",
+        "canonical": "#D8DDE5",
+        "tonalRamp": ["#1B1D20", "#363A40", "#555B64", "#777E89", "#9DA3AC", "#BEC3CA", "#D5D9DF", "#D8DDE5"]
+      }
+    },
+    "shadows": [],
+    "motion": [],
+    "breakpoints": [],
+    "narrative": {
+      "northStar": "The Clear Study Desk",
+      "overview": "SchoolDesk should feel like a clear, dependable place to check the school day and get work done. Its light Windows-native surfaces and French interface keep the application familiar and easy to scan, while a restrained blue marks the current location and the actions that matter.\n\nThe interface uses opaque, matte surfaces and thin borders instead of decorative effects. Liquid Glass, translucency, and blur are rejected. The dashboard leads with today's real schedule and next lesson; the agenda and document tools remain integrated in the same application window.",
+      "keyCharacteristics": [
+        "Light, matte Windows surfaces.",
+        "A restrained blue accent for active navigation and primary actions.",
+        "Clear hierarchy, compact controls, and modest corner rounding.",
+        "Local-first school information with no invented timetable entries."
+      ],
+      "rules": [
+        {
+          "name": "The One Accent Rule",
+          "body": "Keep blue to active navigation, primary actions, and a small amount of schedule information; let neutral surfaces do the structural work.",
+          "section": "colors"
+        },
+        {
+          "name": "The Flat Surface Rule",
+          "body": "Do not add a shadow, blur, or translucent layer to simulate depth.",
+          "section": "elevation"
+        }
+      ],
+      "dos": [
+        "Do use opaque matte surfaces and thin neutral borders to define working areas.",
+        "Do reserve School Blue for active navigation, primary actions, and restrained schedule emphasis.",
+        "Do keep page workflows integrated in the main window.",
+        "Do preserve real local timetable data and clearly present an empty schedule when none is configured."
+      ],
+      "donts": [
+        "Don't use Liquid Glass, decorative translucency, blur, or shadow effects.",
+        "Don't use low-contrast text on colored or selected surfaces.",
+        "Don't add oversized rounded cards or pill-shaped controls.",
+        "Don't invent timetable entries to fill empty states."
+      ]
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "A clear action for the main task on a page.",
+      "html": "<button class=\"ds-btn-primary\">Enregistrer</button>",
+      "css": ".ds-btn-primary { background: #315A9B; color: #FFFFFF; padding: 8px 12px; min-height: 36px; border: 1px solid #315A9B; border-radius: 5px; font: 600 13px 'Segoe UI', sans-serif; } .ds-btn-primary:hover { opacity: 0.88; border-color: #9AA8BC; } .ds-btn-primary:focus-visible { outline: 2px solid #315A9B; outline-offset: 1px; } .ds-btn-primary:active { opacity: 0.90; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A supporting action that should not compete with the page's primary action.",
+      "html": "<button class=\"ds-btn-secondary\">Annuler</button>",
+      "css": ".ds-btn-secondary { background: #F0F2F5; color: #20242A; padding: 8px 12px; min-height: 36px; border: 1px solid #D8DDE5; border-radius: 5px; font: 400 13px 'Segoe UI', sans-serif; } .ds-btn-secondary:hover { opacity: 0.88; border-color: #9AA8BC; } .ds-btn-secondary:focus-visible { outline: 2px solid #315A9B; outline-offset: 1px; } .ds-btn-secondary:active { opacity: 0.90; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-text",
+      "description": "A local data entry field with an explicit keyboard-focus state.",
+      "html": "<input class=\"ds-input-text\" aria-label=\"Nom de la tâche\" value=\"Réviser les fractions\">",
+      "css": ".ds-input-text { background: #FFFFFF; color: #20242A; padding: 7px 9px; min-height: 36px; border: 1px solid #D8DDE5; border-radius: 0; font: 400 13px 'Segoe UI', sans-serif; } .ds-input-text:focus-visible { border: 2px solid #315A9B; outline: none; }"
+    },
+    {
+      "name": "Navigation Item",
+      "kind": "nav",
+      "refersTo": "navigation-item",
+      "description": "A persistent route in the left application rail.",
+      "html": "<button class=\"ds-nav-item\" aria-current=\"page\">Agenda</button>",
+      "css": ".ds-nav-item { display: block; width: 100%; background: transparent; color: #20242A; padding: 10px 14px; min-height: 42px; border: 0; border-radius: 5px; text-align: left; font: 400 13px 'Segoe UI', sans-serif; } .ds-nav-item:hover { opacity: 0.88; } .ds-nav-item[aria-current='page'] { background: #E7EDF7; color: #315A9B; } .ds-nav-item:focus-visible { outline: 2px solid #315A9B; outline-offset: 1px; }"
+    },
+    {
+      "name": "Content Card",
+      "kind": "card",
+      "refersTo": "content-card",
+      "description": "A flat white surface for one coherent working area.",
+      "html": "<section class=\"ds-card\"><h2>Prochain cours</h2><p>Sciences · 10:30</p></section>",
+      "css": ".ds-card { background: #FFFFFF; color: #20242A; padding: 16px; border: 1px solid #D8DDE5; border-radius: 5px; font-family: 'Segoe UI', sans-serif; } .ds-card h2 { margin: 0 0 8px; font-size: 17px; font-weight: 600; } .ds-card p { margin: 0; color: #5F6875; font-size: 13px; }"
+    }
+  ]
+}

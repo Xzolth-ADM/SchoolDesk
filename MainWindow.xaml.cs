@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using SchoolDesk.Models;
 using SchoolDesk.Services;
@@ -30,7 +31,6 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         _dashboardPage = PageHost.Content;
-        WindowBackdrop.Enable(this);
         _scheduler = new SchedulerService(new ScheduleRepository(), new WeekResolver());
         _timer.Tick += (_, _) => RefreshDashboard();
         Loaded += (_, _) => { RefreshTaskCounters(); RefreshDashboard(); _timer.Start(); };
@@ -153,6 +153,7 @@ public partial class MainWindow : Window
         if (!await editor.OpenDocumentAsync(path)) return;
         PageHost.Content = editor;
         _currentPage = "editor";
+        SetNavigationSelection(_currentPage);
     }
 
     private async Task NavigateToPageAsync(string page)
@@ -183,6 +184,7 @@ public partial class MainWindow : Window
             };
         }
         _currentPage = page;
+        SetNavigationSelection(page);
         if (page == "agenda" && _pages.TryGetValue("agenda", out var agendaPage) && agendaPage is AgendaWindow agenda)
         {
             agenda.ReloadSubjects();
@@ -201,6 +203,29 @@ public partial class MainWindow : Window
     private EditorWindow GetEditorPage() => GetPage("editor", () => new EditorWindow());
 
     public void RefreshAgendaCounters() => RefreshTaskCounters();
+
+    private void SetNavigationSelection(string page)
+    {
+        var selectedBackground = (Brush)FindResource("AccentSubtleBrush");
+        var selectedForeground = (Brush)FindResource("AccentBrush");
+        var inactiveForeground = (Brush)FindResource("MutedBrush");
+        var navigation = new (string Page, Button Button)[]
+        {
+            ("dashboard", NavDashboard),
+            ("agenda", NavAgenda),
+            ("editor", NavDocuments),
+            ("explorer", NavExplorer),
+            ("notes", NavNotes),
+            ("settings", NavSettings)
+        };
+
+        foreach (var item in navigation)
+        {
+            var isSelected = item.Page == page;
+            item.Button.Background = isSelected ? selectedBackground : Brushes.Transparent;
+            item.Button.Foreground = isSelected ? selectedForeground : inactiveForeground;
+        }
+    }
 
     private void ReduceButton_Click(object sender, RoutedEventArgs e) => AskToMinimize();
 
