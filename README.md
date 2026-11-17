@@ -46,6 +46,17 @@ Le test de non-régression DOCX vérifie l'aller-retour des titres Word, des ima
 dotnet run --project Tests\DocxRoundTripSmoke\DocxRoundTripSmoke.csproj -c Release
 ```
 
+## Créer l’installateur Windows
+
+Le script Inno Setup versionné est `installer\SchoolDesk.iss`. Après avoir installé Inno Setup manuellement, publier l’application autonome dans `bin\publish-0.5.3-final`, puis compiler le script depuis la racine du dépôt :
+
+```powershell
+dotnet publish SchoolDesk.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -o bin\publish-0.5.3-final
+ISCC.exe installer\SchoolDesk.iss
+```
+
+Le setup installe SchoolDesk par utilisateur dans `%LOCALAPPDATA%\Programs\SchoolDesk`, sans privilèges administrateur, et conserve les données personnelles séparément dans `%LOCALAPPDATA%\SchoolDesk`.
+
 ## Configurer son emploi du temps
 
 Dans **Paramètres**, choisis **Ouvrir mon fichier d'emploi du temps**. Le fichier est créé localement au premier lancement. Ajoute tes propres événements au tableau JSON, puis redémarre SchoolDesk. Le modèle versionné `Assets/schedule.json` reste vide : tes horaires et tes salles ne sont pas publiés.
