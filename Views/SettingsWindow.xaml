@@ -13,10 +13,91 @@
             <StackPanel MaxWidth="850" HorizontalAlignment="Left">
                 <StackPanel Margin="0,0,0,18">
                     <TextBlock Text="Emploi du temps" FontSize="18" FontWeight="SemiBold" />
-                    <TextBlock Text="Personnalise tes cours, horaires et semaines A/B. Redémarre SchoolDesk après modification."
+                    <TextBlock Text="Ajoute ton planning un créneau à la fois. Chaque modification est enregistrée immédiatement."
                                Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,5,0,12" />
-                    <Button Content="Ouvrir mon fichier d’emploi du temps" Click="OpenSchedule_Click"
-                            HorizontalAlignment="Left" />
+                    <WrapPanel Margin="0,0,0,8">
+                        <StackPanel Margin="0,0,12,8">
+                            <TextBlock Text="Jour" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4" />
+                            <ComboBox x:Name="ScheduleDayBox" Width="150" SelectedIndex="0"
+                                      SelectionChanged="ScheduleFilter_Changed">
+                                <ComboBoxItem Content="Lundi" Tag="Monday" />
+                                <ComboBoxItem Content="Mardi" Tag="Tuesday" />
+                                <ComboBoxItem Content="Mercredi" Tag="Wednesday" />
+                                <ComboBoxItem Content="Jeudi" Tag="Thursday" />
+                                <ComboBoxItem Content="Vendredi" Tag="Friday" />
+                                <ComboBoxItem Content="Samedi" Tag="Saturday" />
+                                <ComboBoxItem Content="Dimanche" Tag="Sunday" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,12,8">
+                            <TextBlock Text="Afficher la semaine" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4" />
+                            <ComboBox x:Name="ScheduleFilterWeekBox" Width="115" SelectedIndex="0"
+                                      SelectionChanged="ScheduleFilter_Changed">
+                                <ComboBoxItem Content="Semaine A" Tag="A" />
+                                <ComboBoxItem Content="Semaine B" Tag="B" />
+                                <ComboBoxItem Content="Toutes" Tag="AB" />
+                            </ComboBox>
+                        </StackPanel>
+                    </WrapPanel>
+                    <ListBox x:Name="ScheduleEntriesList" Height="155" Margin="0,0,0,10"
+                             DisplayMemberPath="DisplayName"
+                             SelectionChanged="ScheduleEntry_Changed" />
+                    <TextBlock Text="Quel est ce créneau ?" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <WrapPanel>
+                        <StackPanel Margin="0,0,10,8">
+                            <TextBlock Text="Début" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4" />
+                            <TextBox x:Name="ScheduleStartBox" Width="95" Text="08:10" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,10,8">
+                            <TextBlock Text="Fin" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4" />
+                            <TextBox x:Name="ScheduleEndBox" Width="95" Text="09:05" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,10,8">
+                            <TextBlock Text="Semaine" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4" />
+                            <ComboBox x:Name="ScheduleWeekBox" Width="100" SelectedIndex="0">
+                                <ComboBoxItem Content="A" Tag="A" />
+                                <ComboBoxItem Content="B" Tag="B" />
+                                <ComboBoxItem Content="A et B" Tag="AB" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,10,8">
+                            <TextBlock Text="Type" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4" />
+                            <ComboBox x:Name="ScheduleKindBox" Width="150" SelectedIndex="0">
+                                <ComboBoxItem Content="Cours" Tag="Lesson" />
+                                <ComboBoxItem Content="Récréation" Tag="Break" />
+                                <ComboBoxItem Content="Cantine" Tag="Lunch" />
+                                <ComboBoxItem Content="Temps libre" Tag="Free" />
+                                <ComboBoxItem Content="Repas maison" Tag="HomeMeal" />
+                            </ComboBox>
+                        </StackPanel>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <StackPanel Margin="0,0,10,8">
+                            <TextBlock Text="Matière ou activité" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4" />
+                            <TextBox x:Name="ScheduleTitleBox" Width="240" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,10,8">
+                            <TextBlock Text="Salle (facultative)" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4" />
+                            <TextBox x:Name="ScheduleRoomBox" Width="145" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,10,8">
+                            <TextBlock Text="Professeur (facultatif)" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4" />
+                            <TextBox x:Name="ScheduleTeacherBox" Width="180" />
+                        </StackPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,2,0,0">
+                        <Button x:Name="SaveScheduleSlotButton" Content="Ajouter ce créneau"
+                                Click="SaveScheduleSlot_Click" Style="{StaticResource PrimaryButtonStyle}"
+                                Margin="0,0,8,8" />
+                        <Button Content="Nouveau créneau" Click="NewScheduleSlot_Click"
+                                Margin="0,0,8,8" />
+                        <Button Content="Supprimer le créneau sélectionné"
+                                Click="DeleteScheduleSlot_Click" Margin="0,0,8,8" />
+                        <Button Content="Ouvrir le fichier JSON" Click="OpenSchedule_Click"
+                                Margin="0,0,8,8" />
+                    </WrapPanel>
+                    <TextBlock Text="La transition entre deux cours avec une sonnerie est calculée automatiquement. Exemple : fin à 09:05, reprise à 09:10."
+                               Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,2,0,0" />
                 </StackPanel>
                 <Separator Margin="0,2,0,18" />
                 <StackPanel Margin="0,0,0,18">

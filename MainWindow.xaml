@@ -109,7 +109,8 @@
                                        TextWrapping="Wrap" Margin="0,8,0,0" />
                             <TextBlock x:Name="RemainingText" Text="--:--" FontSize="54"
                                        FontWeight="Light" Margin="0,28,0,0" />
-                            <Button Content="Ouvrir l’agenda" Click="OpenAgenda_Click"
+                            <Button x:Name="DashboardPrimaryButton" Content="Configurer mon emploi du temps"
+                                    Click="DashboardPrimary_Click"
                                     Style="{StaticResource PrimaryButtonStyle}"
                                     HorizontalAlignment="Left" Margin="0,20,0,0" />
                         </StackPanel>

@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using SchoolDesk.Models;
 
 namespace SchoolDesk.Services;
@@ -8,6 +9,7 @@ public sealed class ScheduleRepository
 {
     private readonly List<ScheduleEntry> _entries;
     public bool HasEntries => _entries.Count > 0;
+    public IReadOnlyList<ScheduleEntry> Entries => _entries.ToList();
     public static string UserSchedulePath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SchoolDesk", "schedule.json");
 
@@ -19,10 +21,18 @@ public sealed class ScheduleRepository
         .OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase)
         .ToList();
 
-    public ScheduleRepository()
+    public ScheduleRepository() : this(UserSchedulePath, ensureUserFile: true)
     {
-        EnsureUserScheduleFile();
-        var path = UserSchedulePath;
+    }
+
+    public ScheduleRepository(string path) : this(path, ensureUserFile: false)
+    {
+    }
+
+    private ScheduleRepository(string path, bool ensureUserFile)
+    {
+        if (ensureUserFile)
+            EnsureUserScheduleFile();
 
         var raw = JsonSerializer.Deserialize<List<ScheduleEntryDto>>(File.ReadAllText(path), new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                   ?? throw new InvalidDataException("L'emploi du temps est vide ou illisible.");
@@ -39,6 +49,7 @@ public sealed class ScheduleRepository
                 End = TimeOnly.Parse(x.End),
                 Title = string.IsNullOrWhiteSpace(x.Title) ? throw new InvalidDataException("Un événement du planning n'a pas de titre.") : x.Title.Trim(),
                 Room = x.Room,
+                Teacher = x.Teacher,
                 Kind = Enum.Parse<ScheduleKind>(x.Kind, true)
             }).ToList();
         }
@@ -47,7 +58,7 @@ public sealed class ScheduleRepository
             throw new InvalidDataException("Le planning contient une journée, une heure, une catégorie ou une semaine invalide.", ex);
         }
 
-        Validate();
+        Validate(_entries);
     }
 
     public static void EnsureUserScheduleFile()
@@ -63,17 +74,68 @@ public sealed class ScheduleRepository
         _entries.Where(x => x.Day == day && x.AppliesTo(week))
             .OrderBy(x => x.Start).ToList();
 
-    private void Validate()
+    public static void SaveEntries(IEnumerable<ScheduleEntry> entries)
+        => SaveEntries(UserSchedulePath, entries);
+
+    public static void SaveEntries(string path, IEnumerable<ScheduleEntry> entries)
     {
-        foreach (var day in _entries.GroupBy(x => x.Day))
+        var normalized = entries.OrderBy(entry => entry.Day)
+            .ThenBy(entry => entry.Start)
+            .ThenBy(entry => entry.Week, StringComparer.Ordinal)
+            .ToList();
+        Validate(normalized);
+
+        var fullPath = Path.GetFullPath(path);
+        var directory = Path.GetDirectoryName(fullPath)!;
+        Directory.CreateDirectory(directory);
+        var temporaryPath = fullPath + ".tmp";
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        try
+        {
+            var data = normalized.Select(entry => new ScheduleEntryDto
+            {
+                Day = entry.Day.ToString(),
+                Week = entry.Week,
+                Start = entry.Start.ToString("HH:mm"),
+                End = entry.End.ToString("HH:mm"),
+                Title = entry.Title.Trim(),
+                Room = string.IsNullOrWhiteSpace(entry.Room) ? null : entry.Room.Trim(),
+                Teacher = string.IsNullOrWhiteSpace(entry.Teacher) ? null : entry.Teacher.Trim(),
+                Kind = entry.Kind.ToString()
+            });
+            File.WriteAllText(temporaryPath, JsonSerializer.Serialize(data, options));
+            if (File.Exists(fullPath))
+                File.Copy(fullPath, fullPath + ".bak", true);
+            File.Move(temporaryPath, fullPath, true);
+        }
+        finally
+        {
+            if (File.Exists(temporaryPath))
+                File.Delete(temporaryPath);
+        }
+    }
+
+    private static void Validate(IReadOnlyCollection<ScheduleEntry> entries)
+    {
+        foreach (var entry in entries)
+        {
+            if (!Enum.IsDefined(entry.Day) || !Enum.IsDefined(entry.Kind))
+                throw new InvalidDataException("Le planning contient une journée ou une catégorie invalide.");
+            if (entry.Week is not ("A" or "B" or "AB"))
+                throw new InvalidDataException($"Semaine inconnue : {entry.Week}.");
+            if (entry.End <= entry.Start)
+                throw new InvalidDataException($"Durée invalide : {entry.Title}.");
+            if (string.IsNullOrWhiteSpace(entry.Title))
+                throw new InvalidDataException("Un événement du planning n'a pas de titre.");
+        }
+
+        foreach (var day in entries.GroupBy(x => x.Day))
         {
             foreach (var week in new[] { "A", "B" })
             {
                 var ordered = day.Where(x => x.AppliesTo(week)).OrderBy(x => x.Start).ToList();
                 for (var i = 0; i < ordered.Count; i++)
                 {
-                    if (ordered[i].End <= ordered[i].Start)
-                        throw new InvalidDataException($"Durée invalide : {ordered[i].Title}.");
                     if (i > 0 && ordered[i].Start < ordered[i - 1].End)
                         throw new InvalidDataException($"Chevauchement détecté le {day.Key} (semaine {week}).");
                 }
@@ -89,6 +151,7 @@ public sealed class ScheduleRepository
         public string End { get; set; } = "09:00";
         public string Title { get; set; } = string.Empty;
         public string? Room { get; set; }
+        public string? Teacher { get; set; }
         public string Kind { get; set; } = "Lesson";
     }
 }

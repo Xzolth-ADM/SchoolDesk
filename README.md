@@ -1,4 +1,4 @@
-# SchoolDesk 0.5.3
+# SchoolDesk 0.5.4
 
 Application scolaire native Windows 11 en C# / .NET 8 / WPF. Fonctionnement local, sans serveur ni dépendance réseau.
 
@@ -17,6 +17,7 @@ Application scolaire native Windows 11 en C# / .NET 8 / WPF. Fonctionnement loca
 - Icône Windows fournie, utilisée pour l'exécutable et la fenêtre principale.
 - Navigation intégrée dans une fenêtre unique : tableau de bord, agenda, documents, explorateur, notes et paramètres sont affichés dans la zone principale, sans fenêtres de module séparées.
 - Emploi du temps personnalisable pour chaque utilisateur depuis Paramètres ; le fichier personnel est conservé dans `%LOCALAPPDATA%\\SchoolDesk\\schedule.json` et n'est jamais partagé avec le dépôt.
+- Assistant de planning intégré aux paramètres : sélection du jour, de la semaine A/B, des horaires, de la matière, de la salle, du professeur et du type d’activité, créneau par créneau ; enregistrement local immédiat et refus des chevauchements.
 - Contraste renforcé pour les listes déroulantes et menus ; fond clair opaque sur toute la fenêtre maximisée.
 - Éditeur avec commandes de mise en forme regroupées et raccourcis Ctrl+N, Ctrl+O et Ctrl+S.
 - Ouverture DOCX asynchrone et export ZIP en arrière-plan, génération XML fractionnée pour laisser respirer l'interface ; sauvegarde automatique uniquement après modification, sans réécritures périodiques à vide.
@@ -48,10 +49,10 @@ dotnet run --project Tests\DocxRoundTripSmoke\DocxRoundTripSmoke.csproj -c Relea
 
 ## Créer l’installateur Windows
 
-Le script Inno Setup versionné est `installer\SchoolDesk.iss`. Après avoir installé Inno Setup manuellement, publier l’application autonome dans `bin\publish-0.5.3-final`, puis compiler le script depuis la racine du dépôt :
+Le script Inno Setup versionné est `installer\SchoolDesk.iss`. Après avoir installé Inno Setup manuellement, publier l’application autonome dans `bin\publish-0.5.4-final`, puis compiler le script depuis la racine du dépôt :
 
 ```powershell
-dotnet publish SchoolDesk.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -o bin\publish-0.5.3-final
+dotnet publish SchoolDesk.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -o bin\publish-0.5.4-release
 ISCC.exe installer\SchoolDesk.iss
 ```
 
@@ -59,7 +60,7 @@ Le setup installe SchoolDesk par utilisateur dans `%LOCALAPPDATA%\Programs\Schoo
 
 ## Configurer son emploi du temps
 
-Dans **Paramètres**, choisis **Ouvrir mon fichier d'emploi du temps**. Le fichier est créé localement au premier lancement. Ajoute tes propres événements au tableau JSON, puis redémarre SchoolDesk. Le modèle versionné `Assets/schedule.json` reste vide : tes horaires et tes salles ne sont pas publiés.
+Dans **Paramètres**, ajoute et modifie les créneaux dans l’assistant de planning intégré ; chaque changement est enregistré immédiatement et appliqué au tableau de bord sans redémarrage. Le bouton principal du tableau de bord conduit aux paramètres tant qu’aucun planning n’est configuré. Le fichier `%LOCALAPPDATA%\\SchoolDesk\\schedule.json` reste local. Le modèle versionné `Assets/schedule.json` et l’installateur sont neutres et ne contiennent aucun horaire personnel.
 
 Chaque entrée utilise les propriétés suivantes :
 
@@ -70,6 +71,7 @@ Chaque entrée utilise les propriétés suivantes :
 | `start`, `end` | Heures au format `HH:mm` |
 | `title` | Nom du cours, de la pause ou de l'événement |
 | `room` | Salle, ou `null` |
+| `teacher` | Professeur, ou `null` |
 | `kind` | `Lesson`, `Break`, `Lunch`, `Free` ou `HomeMeal` |
 
 Les horaires qui se chevauchent et les durées nulles ou négatives sont refusés. Un tableau vide `[]` est valide et affiche un message invitant à configurer le planning.

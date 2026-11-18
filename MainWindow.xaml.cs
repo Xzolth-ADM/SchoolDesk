@@ -13,7 +13,8 @@ namespace SchoolDesk;
 
 public partial class MainWindow : Window
 {
-    private readonly SchedulerService _scheduler;
+    private SchedulerService _scheduler;
+    private ScheduleRepository _scheduleRepository;
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1) };
     private readonly Dictionary<string, UserControl> _pages = new(StringComparer.Ordinal);
     private readonly object _dashboardPage;
@@ -31,7 +32,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         _dashboardPage = PageHost.Content;
-        _scheduler = new SchedulerService(new ScheduleRepository(), new WeekResolver());
+        _scheduleRepository = new ScheduleRepository();
+        _scheduler = new SchedulerService(_scheduleRepository, new WeekResolver());
         _timer.Tick += (_, _) => RefreshDashboard();
         Loaded += (_, _) => { RefreshTaskCounters(); RefreshDashboard(); _timer.Start(); };
         StateChanged += (_, _) => { if (WindowState == WindowState.Normal) RefreshDashboard(); };
@@ -44,6 +46,9 @@ public partial class MainWindow : Window
         ClockText.Text = now.ToString("HH:mm:ss", FrenchCulture);
 
         var result = _scheduler.Evaluate(now, _configuration);
+        DashboardPrimaryButton.Content = _scheduleRepository.HasEntries
+            ? "Ouvrir l’agenda"
+            : "Configurer mon emploi du temps";
         WeekText.Text = result.Week == "?" ? "Semaine indisponible" : $"Semaine {result.Week} · alternance automatique";
         StateText.Text = result.Message.ToUpper(FrenchCulture);
 
@@ -76,7 +81,8 @@ public partial class MainWindow : Window
                 ? "Aujourd'hui"
                 : lessonDate.ToString("dddd d MMMM", FrenchCulture);
             NextDetails.Text = $"{dayLabel} · {lesson.Start:HH\\:mm} – {lesson.End:HH\\:mm}" +
-                (string.IsNullOrWhiteSpace(lesson.Room) ? "" : $"\nSalle : {lesson.Room}");
+                (string.IsNullOrWhiteSpace(lesson.Room) ? "" : $"\nSalle : {lesson.Room}") +
+                (string.IsNullOrWhiteSpace(lesson.Teacher) ? "" : $"\nProfesseur : {lesson.Teacher}");
             var untilLesson = lessonDate - now;
             NextCountdown.Text = untilLesson <= TimeSpan.Zero
                 ? "Le cours commence maintenant"
@@ -92,7 +98,8 @@ public partial class MainWindow : Window
 
     private static string FormatDetails(ScheduleEntry entry) =>
         $"{entry.Start:HH\\:mm} – {entry.End:HH\\:mm}" +
-        (string.IsNullOrWhiteSpace(entry.Room) ? "" : $"  •  {entry.Room}");
+        (string.IsNullOrWhiteSpace(entry.Room) ? "" : $"  •  {entry.Room}") +
+        (string.IsNullOrWhiteSpace(entry.Teacher) ? "" : $"  •  {entry.Teacher}");
 
     private static string FormatDuration(TimeSpan? duration) => duration is null
         ? "--:--"
@@ -117,6 +124,11 @@ public partial class MainWindow : Window
     private async void OpenAgenda_Click(object sender, RoutedEventArgs e)
     {
         await NavigateToPageAsync("agenda");
+    }
+
+    private async void DashboardPrimary_Click(object sender, RoutedEventArgs e)
+    {
+        await NavigateToPageAsync(_scheduleRepository.HasEntries ? "agenda" : "settings");
     }
 
     private async void OpenEditor_Click(object sender, RoutedEventArgs e)
@@ -210,6 +222,13 @@ public partial class MainWindow : Window
     private EditorWindow GetEditorPage() => GetPage("editor", () => new EditorWindow());
 
     public void RefreshAgendaCounters() => RefreshTaskCounters();
+
+    public void RefreshSchedule()
+    {
+        _scheduleRepository = new ScheduleRepository();
+        _scheduler = new SchedulerService(_scheduleRepository, new WeekResolver());
+        RefreshDashboard();
+    }
 
     private void SetNavigationSelection(string page)
     {

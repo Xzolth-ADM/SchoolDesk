@@ -1,5 +1,5 @@
-#define AppVersion "0.5.3"
-#define PublishDirectory "..\bin\publish-0.5.3-final"
+#define AppVersion "0.5.4"
+#define PublishDirectory "..\bin\publish-0.5.4-release"
 
 [Setup]
 AppId={{2F84D52E-4DB8-4B43-9CD7-19DE2FAE3C82}
@@ -14,7 +14,7 @@ ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 OutputDir=..\bin
 OutputBaseFilename=SchoolDesk-{#AppVersion}-Setup-win-x64
-SetupIconFile=..\Assets\image_1_.ico
+SetupIconFile=image_1_(1).ico
 UninstallDisplayIcon={app}\SchoolDesk.exe
 Compression=lzma2
 SolidCompression=yes

@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 using SchoolDesk.Controls;
+using SchoolDesk.Models;
 using SchoolDesk.Services;
 
 namespace SchoolDesk.DocxRoundTripSmoke;
@@ -24,7 +25,8 @@ internal static class Program
             try
             {
                 await VerifyRoundTripAsync();
-                Console.WriteLine("DOCX round-trip smoke checks passed.");
+                VerifySchedulePersistence();
+                Console.WriteLine("DOCX and timetable smoke checks passed.");
                 Environment.ExitCode = 0;
             }
             catch (Exception exception)
@@ -38,6 +40,71 @@ internal static class Program
             }
         };
         return application.Run();
+    }
+
+    private static void VerifySchedulePersistence()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"SchoolDesk-schedule-{Guid.NewGuid():N}.json");
+        var monday = new ScheduleEntry
+        {
+            Day = DayOfWeek.Monday,
+            Week = "AB",
+            Start = new TimeOnly(8, 10),
+            End = new TimeOnly(9, 5),
+            Title = "Chinois LV2",
+            Room = "s.104",
+            Teacher = "Tornier.Y",
+            Kind = ScheduleKind.Lesson
+        };
+        var transitionLesson = new ScheduleEntry
+        {
+            Day = DayOfWeek.Monday,
+            Week = "AB",
+            Start = new TimeOnly(9, 10),
+            End = new TimeOnly(10, 5),
+            Title = "Technologie",
+            Room = "s.T5 · Vilpois C",
+            Kind = ScheduleKind.Lesson
+        };
+        try
+        {
+            ScheduleRepository.SaveEntries(path, [monday, transitionLesson]);
+            var repository = new ScheduleRepository(path);
+            Assert(repository.HasEntries && repository.ForDay(DayOfWeek.Monday, "A").Count == 2,
+                "The schedule was not saved and reloaded.");
+            Assert(repository.ForDay(DayOfWeek.Monday, "B").Count == 2,
+                "An A/B shared lesson was not returned for both weeks.");
+            var scheduler = new SchedulerService(repository, new WeekResolver());
+            var result = scheduler.Evaluate(
+                new DateTime(2026, 11, 16, 9, 7, 0),
+                new WeekConfiguration { ReferenceDate = new DateOnly(2026, 11, 11), ReferenceWeek = "A" });
+            Assert(result.State == ScheduleState.Transition && result.Remaining == TimeSpan.FromMinutes(3),
+                "The five-minute between-class transition was not calculated.");
+
+            var overlap = new ScheduleEntry
+            {
+                Day = DayOfWeek.Monday,
+                Week = "A",
+                Start = new TimeOnly(9, 0),
+                End = new TimeOnly(9, 30),
+                Title = "Chevauchement",
+                Kind = ScheduleKind.Lesson
+            };
+            try
+            {
+                ScheduleRepository.SaveEntries(path, [monday, transitionLesson, overlap]);
+                throw new InvalidDataException("A colliding timetable slot was accepted.");
+            }
+            catch (InvalidDataException exception) when (exception.Message.Contains("Chevauchement", StringComparison.Ordinal))
+            {
+            }
+        }
+        finally
+        {
+            if (File.Exists(path)) File.Delete(path);
+            if (File.Exists(path + ".bak")) File.Delete(path + ".bak");
+            if (File.Exists(path + ".tmp")) File.Delete(path + ".tmp");
+        }
     }
 
     private static async Task VerifyRoundTripAsync()
