@@ -1,4 +1,4 @@
-# SchoolDesk 0.5.4
+# SchoolDesk 0.5.6
 
 Application scolaire native Windows 11 en C# / .NET 8 / WPF. Fonctionnement local, sans serveur ni dépendance réseau.
 
